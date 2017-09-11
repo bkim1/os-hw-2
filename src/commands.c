@@ -6,9 +6,8 @@
 
 void execArgs(char **args) {
     int pid;
-    pid = fork();
 
-    switch(pid) {
+    switch(pid = fork()) {
         // Error with the fork() 
         case(-1):
             perror("Fork failed.");
@@ -20,20 +19,24 @@ void execArgs(char **args) {
             break;
 
         // In parent process
-        default:
-            printf("IM THE PARENT!!!\n");
-            int status;
+        default: {
             int child_pid;
-            child_pid = wait(&status);
+            int code;
+            child_pid = wait(&code);
 
-            printf("Child: %i\n", child_pid);
-            printf("Exited with status: %i\n", status);
+            printf("Exited with code: %i\n", code);
+        }
     }
 }
 
 void child(char **args) {
-    printf("IM THE CHILD!!!\n");
-    exit(0);
+    // printf("IM THE CHILD!!!\n");
+    
+    printf("%s\n", args[0]);
+    execvp(args[0], args);
+
+    perror("excevp failed");
+    exit(1);
 }
 
 void showPID() {
