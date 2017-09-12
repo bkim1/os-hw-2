@@ -5,23 +5,35 @@
 #include "commands.h"
 
 #define ANSI_RED   "\x1B[31m"
+#define ANSI_MAG   "\x1B[35m"
 #define ANSI_RESET "\x1B[0m"
 
 extern char **environ;
 
+/* 
+Function for child processes
+Executes the command with execvp 
+*/
 void child(char **args) {
     execvp(args[0], args);
 
-    // printf(ANSI_RED "Error: " ANSI_RESET);
     perror(ANSI_RED "Error: " ANSI_RESET "Command failed");
     exit(1);
 }
 
+/* 
+Prints all environment variables 
+Original Author: Professor Signorile
+*/
 void printEnv() {
     char **env = environ;
     while (*env) { printf("%s\n", *env++); }
 }
 
+/*
+Handles creation of new process 
+Separates execution for parent and children
+*/
 void execArgs(char **args, int *pids, int *count) {
     int pid;
 
@@ -42,14 +54,18 @@ void execArgs(char **args, int *pids, int *count) {
 
             int childPID;
             int code;
-            childPID = wait(&code);
+            childPID = waitpid(pid, &code, 0);
         }
     }
 }
 
+/*
+Changes current working directory
+Sets environment variables correctly
+*/
 void execCD(char *path, int max) {
-    char oldcwd[max];
-    getcwd(oldcwd, sizeof(oldcwd));
+    char oldCWD[max];
+    getcwd(oldCWD, sizeof(oldCWD));
 
     chdir(path);
     char pwd[max];
@@ -57,9 +73,12 @@ void execCD(char *path, int max) {
     
     /* Set new ENV paths */
     setenv("PWD", pwd, 1);
-    setenv("OLDPWD", oldcwd, 1);
+    setenv("OLDPWD", oldCWD, 1);
 }
 
+/*
+Prints last 5 PIDs created
+*/
 void showPID(int *pids, int max) {
     for (int i = 0; i < max; i++) {
         if (pids[i] != 0) {

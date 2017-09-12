@@ -9,10 +9,10 @@
 #define ANSI_MAG   "\x1B[35m"
 #define ANSI_RESET "\x1B[0m"
 
-#define MAX_TOKEN 10
-#define MAX_LINE_LEN 80
+#define MAX_TOKEN     10
+#define MAX_LINE_LEN  80
 #define MAX_PID_COUNT 5
-#define MAX_PATH_LEN 100
+#define MAX_PATH_LEN  100
 
 int pids[MAX_PID_COUNT];
 char string[MAX_LINE_LEN];
@@ -30,11 +30,13 @@ int main(int argc, char **argv) {
     while (1) {
         int argCount;
 
+        // Get user input
         if (getInput(string) == 1) { 
             argCount = getArguments(string, args, delimiters);
         }
         else { argCount = 0; }
 
+        // Execute correct function depending on command
         if (argCount > 0 && strcmp(args[0], "\n") != 0) {
             if (strcmp("exit", args[0]) == 0){
                 printf("exit\n");
@@ -63,6 +65,7 @@ int main(int argc, char **argv) {
     }
 }
 
+/* Makes room for new PID in the list */
 void sortPIDS() {
     for (int i = 0; i < MAX_PID_COUNT - 1; i++) {
         pids[i] = pids[i+1];
@@ -70,6 +73,10 @@ void sortPIDS() {
     pids[MAX_PID_COUNT - 1] = 0; 
 }
 
+/* 
+Prints the prompt for the user
+Displays the current folder the user is in and the user
+*/
 void prompt() {
     /* Get current Username */
     char *user;
