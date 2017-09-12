@@ -18,7 +18,7 @@ int pids[MAX_PID_COUNT];
 char string[MAX_LINE_LEN];
 char *args[MAX_TOKEN];
 
-void sortPIDS();
+void reorderPIDS();
 void prompt();
 int getInput(char *line);
 int getArguments(char *line, char **args, char *delimiters);
@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
             }
             else {
                 if (count == MAX_PID_COUNT) {
-                    sortPIDS();
+                    reorderPIDS();
                     count = MAX_PID_COUNT - 1;
                 }
 
@@ -66,7 +66,7 @@ int main(int argc, char **argv) {
 }
 
 /* Makes room for new PID in the list */
-void sortPIDS() {
+void reorderPIDS() {
     for (int i = 0; i < MAX_PID_COUNT - 1; i++) {
         pids[i] = pids[i+1];
     }
