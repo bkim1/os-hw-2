@@ -77,14 +77,14 @@ void prompt() {
 
     /* Get Current Folder Path */
     char cwd[MAX_PATH_LEN];
-    char *ptr;
+    char *currFolder;
     int c = '/';
     
     getcwd(cwd, sizeof(cwd));
-    ptr = strrchr(cwd, c);
-    ptr++;
+    currFolder = strrchr(cwd, c);
+    currFolder++;
     
-    printf(ANSI_MAG "%s" ANSI_RESET ": %s$ ", user, ptr);
+    printf("bkims-shell:%s " ANSI_MAG "%s" ANSI_RESET "$ ", currFolder, user);
 }
 
 /* 
