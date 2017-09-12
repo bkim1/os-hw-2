@@ -47,8 +47,17 @@ void execArgs(char **args, int *pids, int *count) {
     }
 }
 
-void execCD() {
-    printf("CD command called\n");
+void execCD(char *path, int max) {
+    char oldcwd[max];
+    getcwd(oldcwd, sizeof(oldcwd));
+
+    chdir(path);
+    char pwd[max];
+    getcwd(pwd, sizeof(pwd));
+    
+    /* Set new ENV paths */
+    setenv("PWD", pwd, 1);
+    setenv("OLDPWD", oldcwd, 1);
 }
 
 void showPID(int *pids, int max) {

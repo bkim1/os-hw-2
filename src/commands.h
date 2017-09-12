@@ -4,7 +4,7 @@
 void child(char **args);
 void printEnv();
 void execArgs(char **args, int *pids, int *count);
-void execCD();
+void execCD(char *path, int max);
 void showPID();
 
 

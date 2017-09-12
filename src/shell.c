@@ -25,9 +25,10 @@ int main(int argc, char **argv) {
     while (1) {
         int argCount;
 
-        if (getInput(string) == 1) {
+        if (getInput(string) == 1) { 
             argCount = getArguments(string, args, delimiters);
         }
+        else { argCount = 0; }
 
         if (argCount > 0 && strcmp(args[0], "\n") != 0) {
             if (strcmp("exit", args[0]) == 0){
@@ -35,7 +36,7 @@ int main(int argc, char **argv) {
                 exit(0);
             }
             else if (strcmp("cd", args[0]) == 0) {
-                execCD();
+                execCD(args[1], MAX_PATH_LEN);
             }
             else if (strcmp("showpid", args[0]) == 0) {
                 showPID(pids, MAX_PID_COUNT);
