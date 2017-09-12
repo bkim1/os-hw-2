@@ -25,7 +25,7 @@ int getArguments(char *line, char **args, char *delimiters);
 
 int main(int argc, char **argv) {
     char delimiters[] = " \n";
-    int count = 0;
+    int pidCount = 0;
 
     while (1) {
         int argCount;
@@ -52,13 +52,13 @@ int main(int argc, char **argv) {
                 printEnv();
             }
             else {
-                if (count == MAX_PID_COUNT) {
+                if (pidCount == MAX_PID_COUNT) {
                     reorderPIDS();
-                    count = MAX_PID_COUNT - 1;
+                    pidCount = MAX_PID_COUNT - 1;
                 }
 
-                execArgs(args, pids, &count);
-                count++;
+                execArgs(args, pids, &pidCount);
+                pidCount++;
             }            
         }
 
