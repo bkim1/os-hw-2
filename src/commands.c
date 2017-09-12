@@ -4,7 +4,21 @@
 #include <unistd.h>
 #include "commands.h"
 
-void execArgs(char **args) {
+extern char **environ;
+
+void child(char **args) {
+    execvp(args[0], args);
+
+    perror("Error: Command failed");
+    exit(1);
+}
+
+void printEnv() {
+    char **env = environ;
+    while (*env) { printf("%s\n", *env++); }
+}
+
+void execArgs(char **args, int *pids, int *count) {
     int pid;
 
     switch(pid = fork()) {
@@ -20,29 +34,27 @@ void execArgs(char **args) {
 
         // In parent process
         default: {
-            int child_pid;
-            int code;
-            child_pid = wait(&code);
+            pids[*count] = pid;
 
-            printf("Exited with code: %i\n", code);
+            int childPID;
+            int code;
+            childPID = wait(&code);
+
+            if (code != 0) {
+                printf("Exited with code: %i\n", code);
+            }
         }
     }
 }
 
-void child(char **args) {
-    // printf("IM THE CHILD!!!\n");
-    
-    printf("%s\n", args[0]);
-    execvp(args[0], args);
-
-    perror("excevp failed");
-    exit(1);
-}
-
-void showPID() {
-    printf("showpid command called\n");
-}
-
 void execCD() {
     printf("CD command called\n");
+}
+
+void showPID(int *pids, int max) {
+    for (int i = 0; i < max; i++) {
+        if (pids[i] != 0) {
+            printf("%i\n", pids[i]);
+        }
+    }
 }

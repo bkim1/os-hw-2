@@ -2,8 +2,10 @@
 #define _commands_h
 
 void child(char **args);
-void execArgs(char **args);
-void showPID();
+void printEnv();
+void execArgs(char **args, int *pids, int *count);
 void execCD();
+void showPID();
+
 
 #endif

@@ -6,16 +6,21 @@
 #include "commands.h"
 
 #define MAX_TOKEN 10
-#define MAX_LINE_LEN 80 //MAX_SIZE size for string length
+#define MAX_LINE_LEN 80
+#define MAX_PID_COUNT 5
+#define MAX_PATH_LEN 100
 
+int pids[MAX_PID_COUNT];
 char string[MAX_LINE_LEN];
 char *args[MAX_TOKEN];
 
+void sortPIDS();
 int getInput(char *line);
 int getArguments(char *line, char **args, char *delimiters);
 
 int main(int argc, char **argv) {
     char delimiters[] = " \n";
+    int count = 0;
 
     while (1) {
         int argCount;
@@ -24,7 +29,7 @@ int main(int argc, char **argv) {
             argCount = getArguments(string, args, delimiters);
         }
 
-        if (argCount > 0) {
+        if (argCount > 0 && strcmp(args[0], "\n") != 0) {
             if (strcmp("exit", args[0]) == 0){
                 printf("exit\n");
                 exit(0);
@@ -33,14 +38,30 @@ int main(int argc, char **argv) {
                 execCD();
             }
             else if (strcmp("showpid", args[0]) == 0) {
-                showPID();
+                showPID(pids, MAX_PID_COUNT);
+            }
+            else if (strcmp("environ", args[0]) == 0) {
+                printEnv();
             }
             else {
-                execArgs(args);
+                if (count == MAX_PID_COUNT) {
+                    sortPIDS();
+                    count = MAX_PID_COUNT - 1;
+                }
+
+                execArgs(args, pids, &count);
+                count++;
             }            
         }
 
     }
+}
+
+void sortPIDS() {
+    for (int i = 0; i < MAX_PID_COUNT - 1; i++) {
+        pids[i] = pids[i+1];
+    }
+    pids[MAX_PID_COUNT - 1] = 0; 
 }
 
 /* 
@@ -48,12 +69,25 @@ Prompts the User for input
 Checks for leading whitespace and going over line length
  */
 int getInput(char *line) {
-    printf("prompt$ ");
+    /* Get current Username */
+    char *user;
+    user = getenv("USER");
+
+    /* Get Current Folder Path */
+    char cwd[MAX_PATH_LEN];
+    char *ptr;
+    int c = '/';
+    
+    getcwd(cwd, sizeof(cwd));
+    ptr = strrchr(cwd, c);
+    ptr++;
+    
+    printf("%s: %s$ ", user, ptr);
 
     /* Skip leading whitespace */
     while (1) { 
         int c = getchar();
-        if (c == EOF || c == 10) { break; }
+        if (c == 10) { return 0; }
         if (!isspace(c)) {
              ungetc(c, stdin);
              break;
@@ -63,7 +97,8 @@ int getInput(char *line) {
     int i = 0;
     while (1) {
         int c = getchar();
-        if (c == EOF || c == 10) { /* at end, add terminating zero */
+
+        if (c == 10) { /* at end, add terminating zero */
             line[i] = 0;
             break;
         }
