@@ -4,12 +4,16 @@
 #include <unistd.h>
 #include "commands.h"
 
+#define ANSI_RED   "\x1B[31m"
+#define ANSI_RESET "\x1B[0m"
+
 extern char **environ;
 
 void child(char **args) {
     execvp(args[0], args);
 
-    perror("Error: Command failed");
+    // printf(ANSI_RED "Error: " ANSI_RESET);
+    perror(ANSI_RED "Error: " ANSI_RESET "Command failed");
     exit(1);
 }
 
@@ -24,7 +28,7 @@ void execArgs(char **args, int *pids, int *count) {
     switch(pid = fork()) {
         // Error with the fork() 
         case(-1):
-            perror("Fork failed.");
+            perror(ANSI_RED "Error: " ANSI_RESET "Fork failed.");
             exit(1);
         
         // In child process 
@@ -39,10 +43,6 @@ void execArgs(char **args, int *pids, int *count) {
             int childPID;
             int code;
             childPID = wait(&code);
-
-            if (code != 0) {
-                printf("Exited with code: %i\n", code);
-            }
         }
     }
 }

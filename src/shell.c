@@ -5,6 +5,10 @@
 #include <unistd.h>
 #include "commands.h"
 
+#define ANSI_RED   "\x1B[31m"
+#define ANSI_MAG   "\x1B[35m"
+#define ANSI_RESET "\x1B[0m"
+
 #define MAX_TOKEN 10
 #define MAX_LINE_LEN 80
 #define MAX_PID_COUNT 5
@@ -15,6 +19,7 @@ char string[MAX_LINE_LEN];
 char *args[MAX_TOKEN];
 
 void sortPIDS();
+void prompt();
 int getInput(char *line);
 int getArguments(char *line, char **args, char *delimiters);
 
@@ -65,11 +70,7 @@ void sortPIDS() {
     pids[MAX_PID_COUNT - 1] = 0; 
 }
 
-/* 
-Prompts the User for input
-Checks for leading whitespace and going over line length
- */
-int getInput(char *line) {
+void prompt() {
     /* Get current Username */
     char *user;
     user = getenv("USER");
@@ -83,7 +84,15 @@ int getInput(char *line) {
     ptr = strrchr(cwd, c);
     ptr++;
     
-    printf("%s: %s$ ", user, ptr);
+    printf(ANSI_MAG "%s" ANSI_RESET ": %s$ ", user, ptr);
+}
+
+/* 
+Prompts the User for input
+Checks for leading whitespace and going over line length
+ */
+int getInput(char *line) {
+    prompt();
 
     /* Skip leading whitespace */
     while (1) { 
@@ -105,7 +114,7 @@ int getInput(char *line) {
         }
         line[i] = c;
         if (i == MAX_LINE_LEN - 1) { /* buffer full */
-            perror("Line is too long");
+            perror(ANSI_RED "Error: " ANSI_RESET "Line is too long");
 
             /* Clear Input Buffer */
             while ((c = getchar()) != '\n' && c != EOF) { }
@@ -132,7 +141,7 @@ int getArguments(char *line, char **args, char *delimiters) {
     while ( (args[count] = strtok (NULL, delimiters)) ) { 
         // printf("%d. %s\n", count, args[count]);
         if (count > MAX_TOKEN) {
-            perror("Too many arguments given");
+            perror(ANSI_RED "Error: " ANSI_RESET "Too many arguments given");
             return -1;
         }
         count++;
