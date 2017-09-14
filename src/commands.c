@@ -67,13 +67,17 @@ void execCD(char *path, int max) {
     char oldCWD[max];
     getcwd(oldCWD, sizeof(oldCWD));
 
-    chdir(path);
-    char pwd[max];
-    getcwd(pwd, sizeof(pwd));
-    
-    /* Set new ENV paths */
-    setenv("PWD", pwd, 1);
-    setenv("OLDPWD", oldCWD, 1);
+    if (chdir(path) == -1) {
+        perror(ANSI_RED "Error" ANSI_RESET);
+    }
+    else {
+        char pwd[max];
+        getcwd(pwd, sizeof(pwd));
+        
+        /* Set new ENV paths */
+        setenv("PWD", pwd, 1);
+        setenv("OLDPWD", oldCWD, 1);
+    }
 }
 
 /*
