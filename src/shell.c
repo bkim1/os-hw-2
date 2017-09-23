@@ -54,6 +54,7 @@ int main(int argc, char **argv) {
                 printEnv();
             }
             else {
+                // Check for background processing
                 if (strcmp("&", args[argCount - 1]) == 0) {
                     args[argCount - 1] = NULL;
                     argCount--;

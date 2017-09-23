@@ -49,12 +49,16 @@ Executes the command with execvp
 */
 void child(char **args, int argCount, int backgrd) {
     int i;
+    int redirect = 0;
 
+    // Check for any I/O Redirection
     for (i = 0; i < argCount; i++) {
+        // Input Redirection
         if (strcmp("<", args[i]) == 0) {
             i++;
             
             if ( access(args[i], F_OK | R_OK) == 0 ) {
+                redirect = 1;
                 freopen(args[i], "r", stdin);
             }
             else {
@@ -63,7 +67,9 @@ void child(char **args, int argCount, int backgrd) {
             args[i - 1] = NULL;
             args[i] = NULL;
         }
+        // Output Redirection
         else if (strcmp(">", args[i]) == 0) {
+            redirect = 1;
             i++;
             freopen(args[i], "w", stdout);
 
@@ -72,7 +78,7 @@ void child(char **args, int argCount, int backgrd) {
         }
     }
 
-    if (backgrd == 1) { printf("\n"); }
+    if (backgrd == 1 && redirect == 0) { printf("\n"); }
     
     execvp(args[0], args);
 
