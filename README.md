@@ -1,4 +1,4 @@
-# Programming Project 1
+# Programming Project 2
 ---
 Author: Branden Kim
 
@@ -11,6 +11,13 @@ Class: Operating Systems
 2. Open a terminal window to the directory containing the files
 3. Run `gcc -o shell shell.c commands.c`
 4. Run `./shell`
+
+## Differences from Project 1
+
+* Added redirection of stdin and stdout
+* Added background processing of tasks
+    * Specified with an '&' at the end of the command
+* Refactored parts of project to work with new commands
 
 ## List of Files:
 
@@ -38,25 +45,4 @@ Class: Operating Systems
     * `environ`
     * `showpid`
 
-## Challenges:
-
-Writing in C
-* Been a while since I had written in C, so it took some time to get used to it again
-* Dealing with pointers
-
-Ignoring leading and trailing whitespace
-* Had to get input for every character given in line
-* Function adapted from StackOverflow answer 
-
-Issues with displaying current folder in prompt
-* Originally had a separate function for returning the PWD
-* Ran into issues with returning the pointer to the array of chars
-* Worked around it by having a separate function that prints the prompt instead of returning a pointer
-
-## Sources used:
-
-StackOverflow
-
-Canvas (Professor Signorile's code)
-* Noted in comments
 

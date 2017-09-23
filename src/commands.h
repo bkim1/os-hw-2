@@ -1,9 +1,10 @@
 #ifndef _commands_h
 #define _commands_h
 
-void child(char **args);
+void sigCatch();
+void child(char **args, int argCount, int backgrd);
 void printEnv();
-void execArgs(char **args, int *pids, int *count);
+int execArgs(char **args, int argCount,int backgrd);
 void execCD(char *path, int max);
 void showPID();
 

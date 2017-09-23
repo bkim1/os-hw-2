@@ -29,6 +29,8 @@ int main(int argc, char **argv) {
 
     while (1) {
         int argCount;
+        int backgrd;
+        int pid;
 
         // Get user input
         if (getInput(string) == 1) { 
@@ -52,13 +54,22 @@ int main(int argc, char **argv) {
                 printEnv();
             }
             else {
+                if (strcmp("&", args[argCount - 1]) == 0) {
+                    args[argCount - 1] = NULL;
+                    argCount--;
+                    backgrd = 1;
+                }
+                else { backgrd = 0; }
+
+                pid = execArgs(args, argCount, backgrd);
+                pidCount++;
+
                 if (pidCount == MAX_PID_COUNT) {
                     reorderPIDS();
-                    pidCount = MAX_PID_COUNT - 1;
+                    pids[MAX_PID_COUNT - 1] = pid;
+                    pidCount--;
                 }
-
-                execArgs(args, pids, &pidCount);
-                pidCount++;
+                else { pids[pidCount] = pid; }
             }            
         }
 

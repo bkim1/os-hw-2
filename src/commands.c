@@ -10,11 +10,70 @@
 
 extern char **environ;
 
+
+/*
+Handles creation of new process 
+Separates execution for parent and children
+*/
+int execArgs(char **args, int argCount, int backgrd) {
+    int pid;
+
+    switch(pid = fork()) {
+        // Error with the fork() 
+        case(-1):
+            perror(ANSI_RED "Error: " ANSI_RESET "Fork failed.");
+            exit(1);
+        
+        // In child process 
+        case(0):
+            child(args, argCount, backgrd);
+            break;
+
+        // In parent process
+        default: {
+            if (backgrd != 1) {
+                int childPID;
+                int code;
+
+                childPID = waitpid(pid, &code, 0);
+            }
+            return pid;
+        }
+    }
+    return 0;
+}
+
 /* 
 Function for child processes
 Executes the command with execvp 
 */
-void child(char **args) {
+void child(char **args, int argCount, int backgrd) {
+    int i;
+
+    for (i = 0; i < argCount; i++) {
+        if (strcmp("<", args[i]) == 0) {
+            i++;
+            
+            if ( access(args[i], F_OK | R_OK) == 0 ) {
+                freopen(args[i], "r", stdin);
+            }
+            else {
+                perror("Not a valid file");
+            }
+            args[i - 1] = NULL;
+            args[i] = NULL;
+        }
+        else if (strcmp(">", args[i]) == 0) {
+            i++;
+            freopen(args[i], "w", stdout);
+
+            args[i - 1] = NULL;
+            args[i] = NULL;
+        }
+    }
+
+    if (backgrd == 1) { printf("\n"); }
+    
     execvp(args[0], args);
 
     perror(ANSI_RED "Error: " ANSI_RESET "Command failed");
@@ -28,35 +87,6 @@ Original Author: Professor Signorile
 void printEnv() {
     char **env = environ;
     while (*env) { printf("%s\n", *env++); }
-}
-
-/*
-Handles creation of new process 
-Separates execution for parent and children
-*/
-void execArgs(char **args, int *pids, int *count) {
-    int pid;
-
-    switch(pid = fork()) {
-        // Error with the fork() 
-        case(-1):
-            perror(ANSI_RED "Error: " ANSI_RESET "Fork failed.");
-            exit(1);
-        
-        // In child process 
-        case(0):
-            child(args);
-            break;
-
-        // In parent process
-        default: {
-            pids[*count] = pid;
-
-            int childPID;
-            int code;
-            childPID = waitpid(pid, &code, 0);
-        }
-    }
 }
 
 /*
